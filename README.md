@@ -1,7 +1,34 @@
-# Extended Kalman Filter Project Starter Code
-Self-Driving Car Engineer Nanodegree Program
+# Extended Kalman Filter Project 
+## Self-Driving Car Engineer Nanodegree Program-Extended Kalman Filter Project 
+
+To view the video on Youtube, click on the following image:
+
+Dataset 1:
+
+[![IMAGE ALT TEXT HERE](videos/dataset1.gif)](https://youtu.be/rt-RpNMnipY)
+
+
+
+Dataset 2:
+
+[![](videos/dataset2.gif)](https://youtu.be/zMffPD7hg5M)
+
+## Project Introduction
+
+We are providing simulated lidar and radar measurements detecting a  bicycle that travels around your vehicle. You will use a Kalman filter,  lidar measurements and radar measurements to track the bicycle's  position and velocity.
 
 In this project you will utilize a kalman filter to estimate the state of a moving object of interest with noisy lidar and radar measurements. Passing the project requires obtaining RMSE values that are lower than the tolerance outlined in the project rubric. 
+
+The Kalman Filter algorithm will go through the following steps:
+
+- **first measurement** - the filter will receive initial measurements of the bicycle's position relative to the car. These  measurements will come from a radar or lidar sensor.
+- **initialize state and covariance matrices** - the filter will initialize the bicycle's position based on the first measurement.
+- then the car will receive another sensor measurement after a time period Δt\Delta{t}Δt.
+- **predict** - the algorithm will predict where the bicycle will be after time Δt\Delta{t}Δt. One basic way to predict the bicycle location after Δt\Delta{t}Δt is to assume the bicycle's velocity is constant; thus the bicycle will have moved velocity * Δt\Delta{t}Δt. In the extended Kalman filter lesson, we will assume the velocity is constant.
+- **update** - the  filter compares the "predicted"  location with what the sensor measurement says. The predicted location  and the measured location are combined to give an updated location. The  Kalman filter will put more weight on either the predicted location or  the measured location depending on the uncertainty of each value.
+- then the car will receive another sensor measurement after a time period Δt\Delta{t}Δt. The algorithm then does another **predict** and **update** step.
+
+![](videos/algorithm.png)
 
 This project involves the Term 2 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases).
 
@@ -63,7 +90,6 @@ Here is the main protocol that main.cpp uses for uWebSocketIO in communicating w
 1. Clone this repo.
 2. Make a build directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make` 
-   * On windows, you may need to run: `cmake .. -G "Unix Makefiles" && make`
 4. Run it: `./ExtendedKF `
 
 ## Editor Settings
@@ -87,14 +113,48 @@ If you'd like to generate your own radar and lidar data, see the
 [utilities repo](https://github.com/udacity/CarND-Mercedes-SF-Utilities) for
 Matlab scripts that can generate additional data.
 
-## Project Instructions and Rubric
+## [Rubric](https://review.udacity.com/#!/rubrics/748/view) points
 
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+### Compiling
 
-More information is only accessible by people who are already enrolled in Term 2 (three-term version) or Term 1 (two-term version)
-of CarND. If you are enrolled, see the Project Resources page in the classroom
-for instructions and the project rubric.
+#### Your code should compile
+
+The code compiles without errors. I did change the [CMackeLists.txt](./CMakeLists.txt) to add the creation of the `./Tests`. I don't think this will create incompatibilities with other platforms, but I only test it on Mac OS.
+
+### Accuracy
+
+#### px, py, vx, vy output coordinates must have an RMSE <= [.11, .11, 0.52, 0.52] when using the file: "obj_pose-laser-radar-synthetic-input.txt which is the same data file the simulator uses for Dataset 1"
+
+The EKF accuracy was:
+
+- Dataset 1 : RMSE <= [0.0973, 0.0855, 0.4513, 0.4399]
+
+### Following the Correct Algorithm
+
+#### Your Sensor Fusion algorithm follows the general processing flow as taught in the preceding lessons.
+
+The Kalman filter implementation can be found [src/kalman_filter.cpp](./src/kalman_filter.cpp) and it is used to predict at [src/FusionEKF.cpp](./src/kalman_filter.cpp#L147) line 147 and to update line 159 to 169.
+
+### Your Kalman Filter algorithm handles the first measurements appropriately.
+
+The first measurement is handled at [src/FusionEKF.cpp](./src/kalman_filter.cpp#L61) from line 61 to line 107.
+
+### Your Kalman Filter algorithm first predicts then updates.
+
+The predict operation could be found at [src/FusionEKF.cpp](./src/kalman_filter.cpp#L147) line 147 and the update operation from line 159 to 169 of the same file.
+
+### Your Kalman Filter can handle radar and lidar measurements.
+
+Different type of measurements are handled in two places in [src/FusionEKF.cpp](./src/kalman_filter.cpp):
+
+- For the first measurement from line 61 to line 107.
+- For the update part from line 159 to 169.
+
+### Code Efficiency
+
+#### Your algorithm should avoid unnecessary calculations.
+
+An example of this calculation optimization is when the Q matrix is calculated [src/FusionEKF.cpp](./src/kalman_filter.cpp#L141) line 135 to line 144.
 
 ## Hints and Tips!
 
@@ -106,29 +166,5 @@ for instructions and the project rubric.
     + remove write permissions so that the simulator can't write to log
  * Please note that the ```Eigen``` library does not initialize ```VectorXd``` or ```MatrixXd``` objects with zeros upon creation.
 
-## Call for IDE Profiles Pull Requests
 
-Help your fellow students!
-
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to ensure
-that students don't feel pressured to use one IDE or another.
-
-However! We'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
-
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
-
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
-
-Regardless of the IDE used, every submitted project must
-still be compilable with cmake and make.
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
 
